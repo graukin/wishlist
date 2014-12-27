@@ -8,15 +8,16 @@ my $wishlistParsed="./wishlist.actual";
 print '>> ';
 my %oldWishList;
 my %newWishList;
-while (<>) {
-  chomp;
-  if (/^q/i) { # q or quit for exit
+while ( 1 ) {
+  my $line = <>;
+  chomp( $line );
+  if ( $line =~ /^q/i ) { # q or quit for exit
     print "Goodbuy!\n";
     exit;
   }
 
-  if (/^h/i) { # h or help for help
-    (my $message = <<"    END_MESSAGE") =~ s/^ {4}//gm;
+  if ( $line =~ /^h/i ) { # h or help for help
+    ( my $message = <<"    END_MESSAGE" ) =~ s/^ {4}//gm;
     q or quit --- exit the script
     h or help --- print this help
 
@@ -29,12 +30,11 @@ while (<>) {
     print $message;
   }
 # work with entire wishlist
-  if (/^w /i) {
-    $_ =~ /w ([a-zA-Z]+)/;
-    my $marker = $1;
+  if ( $line =~ /^w /i ) {
+    my @commands = split / /, $line;
+    my $marker = $commands[1];
     if ( $marker eq 'update' ) {
-      $_ =~ /w (\w+)( (\S+))?/;
-      my $nickname = $3;
+      my $nickname = $commands[2];
       WishList::load_wishlist( $nickname, $wishlistSrc );
       %newWishList = WishList::parse_wishlist( $wishlistSrc );
     } elsif ( $marker eq 'stash' ) {

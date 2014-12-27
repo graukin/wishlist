@@ -69,14 +69,15 @@ sub parse_wishlist {
           # discount
           $token = $parser->get_token;
           my $dText = $token->as_is;
-          $dText =~ /-(\d+)%/;
-          $discount = $1;
+          $dText =~ s/[^0-9]//g;
+          $discount = $dText;
         } elsif ( $divClass eq 'discount_final_price' or $divClass eq 'price' ) {
           # price with discount or without
           $token = $parser->get_token;
-          my $dToken = $token->as_is;
-          $dToken =~ /^(\d+)/g;
-          $price = $1 unless $1 eq "update";
+          my @dToken = split / /, $token->as_is;
+          my $sToken = $dToken[0];
+          $sToken =~ s/[^0-9]//g;
+          $price = $sToken unless $sToken eq "";
         }
       }
     } elsif ( $token->is_start_tag( 'h4' ) ) { # possibly it's name
@@ -171,7 +172,7 @@ sub print_map {
     print "$k :: '$v->{'name'}' ";
     print colored ( "$v->{'old_price'} -> ", $color ) if ( exists $v->{'old_price'} and $v->{'old_price'} != 0 );
     print colored ( "$v->{'price'}", $color );
-    print " (-$v->{'discount'}%)" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
+    print " ($v->{'discount'})" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
     print "\n";
   }
 }
