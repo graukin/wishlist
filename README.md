@@ -4,7 +4,7 @@ Simple console util for working with Steam's wishlist. It can:
 * get fresh wishlist from web for given user
 * save this wishlist (parsed) or save only old version (read from file)
 * compare new and old versions and print smartdiff: disappeared and suddenly appeared titles, changes in prices and the rest titles which have no changes
-* 
+
 ## How to use it?
 
 For example there is a user with ID $nickname (I've checked - on the moment of posting this there was no such user).
