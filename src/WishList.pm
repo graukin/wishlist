@@ -76,7 +76,7 @@ sub parse_wishlist {
           $token = $parser->get_token;
           my $dToken = $token->as_is;
           $dToken =~ /^(\d+)/g;
-          $price = $1;
+          $price = $1 unless $1 eq "update";
         }
       }
     } elsif ( $token->is_start_tag( 'h4' ) ) { # possibly it's name
@@ -118,6 +118,49 @@ sub read_wishlist {
 
 sub compare_wishlists {
   my ( $oldMap, $newMap ) = @_;
+  my %onlyOld;
+  my %onlyNew;
+  my %priceUp;
+  my %priceDown;
+  my %priceEq;
+  my %tempCnt;
+  foreach my $key ( keys %$oldMap, %$newMap ) {
+    $tempCnt{$key} ++;
+  }
+  foreach my $key ( keys %tempCnt ) {
+    if ( $tempCnt{$key} == 1 ) {
+      if ( exists $oldMap->{$key} ) {
+        $onlyOld{$key} = $oldMap->{$key};
+      } elsif ( exists $newMap->{$key} ) {
+        $onlyNew{$key} = $newMap->{$key};
+      }
+    } else {
+      if ( $oldMap->{$key}->{'price'} > $newMap->{$key}->{'price'} ) {
+        $priceDown{$key} = $newMap->{$key};
+        $priceDown{$key}->{'old_price'} = $oldMap->{$key}->{'price'};
+      } elsif ( $oldMap->{$key}->{'price'} < $newMap->{$key}->{'price'} ) {
+        $priceUp{$key} = $newMap->{$key};
+        $priceUp{$key}->{'old_price'} = $oldMap->{$key}->{'price'};
+      } else {
+        $priceEq{$key} = $newMap->{$key};
+      }
+    }
+  }
+# print items from old list only
+  say "Disappear from list:";
+  print_map(\%onlyOld);
+# print items from new list only
+  say "Appear in list:";
+  print_map(\%onlyNew);
+# print items with price lower than earlier
+  say "Low price!!!";
+  print_map(\%priceDown);
+# print items with price higher than earlier
+  say "High price :(";
+  print_map(\%priceUp);
+# print items with the same price
+  say "Nothing changes";
+  print_map(\%priceEq);
 }
 
 ##################### work with data map #########################
@@ -125,8 +168,11 @@ sub print_map {
   my ( $mapRef ) = @_;
   while( my( $k, $v ) = each %$mapRef )
   {
-    my $message = "$k :: '$v->{'name'}' $v->{'price'}";
-    $message .=" (-$v->{'discount'}%)" unless $v->{'discount'} == 0;
+    my $message = "$k :: '$v->{'name'}'";
+    $message .=" $v->{'old_price'} ->" if ( exists $v->{'old_price'} and $v->{'old_price'} != 0 );
+    $message .=" $v->{'price'}";
+    $message .=" (-$v->{'discount'}%)" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
+    
     say $message;
   }
 }
