@@ -172,7 +172,7 @@ sub print_map {
     print "$k :: '$v->{'name'}' ";
     print colored ( "$v->{'old_price'} -> ", $color ) if ( exists $v->{'old_price'} and $v->{'old_price'} != 0 );
     print colored ( "$v->{'price'}", $color );
-    print " ($v->{'discount'})" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
+    print " (-$v->{'discount'}%)" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
     print "\n";
   }
 }
