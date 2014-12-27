@@ -6,37 +6,34 @@ use diagnostics;
 use feature 'say';
 use HTML::TokeParser::Simple;
 use LWP::Simple;
+use JSON;
 use Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 $VERSION     = 1.00;
 @ISA         = qw(Exporter);
 @EXPORT      = ();
-@EXPORT_OK   = qw(load_wishlist parse_wishlist);
-%EXPORT_TAGS = ( DEFAULT => [qw(&load_wishlist)],
-                 Both    => [qw(&load_wishlist &parse_wishlist)]);
-
-my $wishlistSrc = './wishlist.html';
-my $wishlistIds = './wish.list';
+@EXPORT_OK   = qw(load_wishlist parse_wishlist save_wishlist read_wishlist compare_wishlists);
+%EXPORT_TAGS = ( DEFAULT => [qw(&load_wishlist)] );
 
 sub load_wishlist {
 # in: nickname -> http://steamcommunity.com/id/$name/wishlist
-  my ($nickname) = @_;
+  my ( $nickname, $path ) = @_;
 
   # if wish.list already exists - remove it, we will make a new one
-  if ( -e $wishlistSrc ) {
-    say $wishlistSrc.' has already existed - remove it.';
-    unlink $wishlistSrc;
+  if ( -e $path ) {
+    say "$path has already existed - remove it.";
+    unlink $path;
   }
 
-  say 'try to load wishlist for user '.$nickname;
+  say "try to load wishlist for user $nickname";
   my $url = 'http://steamcommunity.com/id/'.$nickname.'/wishlist';
   my $content = get $url;
   die "Couldn't get $url" unless defined $content;
-  open (OUTFILE, '>', $wishlistSrc);
-  binmode (OUTFILE, ':utf8');
+  open ( OUTFILE, '>', $path );
+  binmode ( OUTFILE, ':utf8' );
   print OUTFILE $content;
-  close (OUTFILE);
+  close ( OUTFILE );
 }
 
 sub parse_wishlist {
@@ -46,8 +43,8 @@ sub parse_wishlist {
 # <div class='discount_final_price'>$price
 # or
 # <div class='price'>$price
-  my $parser = HTML::TokeParser::Simple->new(file => $wishlistSrc);
-  open (OUTFILE, '>', $wishlistIds);
+  my ( $path ) = @_;
+  my $parser = HTML::TokeParser::Simple->new( file => $path );
   my $gameId=0;
   my $gameName = '';
   my $discount = 0;
@@ -58,7 +55,7 @@ sub parse_wishlist {
       my $divClass = $token->get_attr( 'class' );
       if ( length $divClass ) {
         if ( $divClass eq 'wishlistRow ' ) {
-          if ($gameId != 0) {
+          if ( $gameId != 0 ) {
             $gameMap{$gameId}->{'name'} = $gameName;
             $gameMap{$gameId}->{'discount'} = $discount;
             $gameMap{$gameId}->{'price'} = $price;
@@ -87,22 +84,49 @@ sub parse_wishlist {
       $gameName = $token->as_is;
     }
   }
-  if ($gameId != 0) {
+  if ( $gameId != 0 ) {
     $gameMap{$gameId}->{'name'} = $gameName;
     $gameMap{$gameId}->{'discount'} = $discount;
     $gameMap{$gameId}->{'price'} = $price;
   }
-  printMap(\%gameMap);
-  close(OUTFILE);
+  print_map( \%gameMap );
+  return %gameMap;
+}
+
+sub save_wishlist {
+  my ( $wishMapRef, $path ) = @_;
+  my $mapSize = scalar keys %$wishMapRef;
+  say "Map size = $mapSize";
+  if ( $mapSize == 0 ) {
+    say "Something has gone wrong. Nothing was saved.";
+    return;
+  }
+  my $jsonText = encode_json $wishMapRef;
+  open ( OUTFILE, '>', $path );
+  print OUTFILE $jsonText;
+  close( OUTFILE );
+  say "Map saved.";
+}
+
+sub read_wishlist {
+  my ( $path ) = @_;
+  open( INFILE, '<', $path );
+  my $jsonText   = <INFILE>;
+  my $wishMapRef = decode_json( $jsonText );
+  return %$wishMapRef;
+}
+
+sub compare_wishlists {
+  my ( $oldMap, $newMap ) = @_;
 }
 
 ##################### work with data map #########################
-sub printMap {
-  my ($mapRef) = @_;
-  while(my($k, $v) = each %$mapRef)
+sub print_map {
+  my ( $mapRef ) = @_;
+  while( my( $k, $v ) = each %$mapRef )
   {
-    my $message = $k." :: '".$v->{'name'}."' ".$v->{'price'};
-    $message .=" (-".$v->{'discount'}."%)" unless $v->{'discount'} == 0;
+    my $message = "$k :: '$v->{'name'}' $v->{'price'}";
+    $message .=" (-$v->{'discount'}%)" unless $v->{'discount'} == 0;
     say $message;
   }
 }
