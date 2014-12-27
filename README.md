@@ -28,6 +28,9 @@ ok, it's simple, just exit to your command line. Do not forget to save new list 
 ## Additional packages
 
 HTML::TokeParser::Simple - html parsing
+
 LWP::Simple - send request and get html page from remote server
+
 Term::ANSIColor - I like to color words ^^
+
 JSON - serialize parsed data in json to save it on disk and deserialize when reading it back
