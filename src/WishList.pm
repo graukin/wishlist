@@ -1,11 +1,11 @@
 package WishList;
 
-use strict;
 use warnings;
-use diagnostics;
+use strict;
 use feature 'say';
 use HTML::TokeParser::Simple;
 use LWP::Simple;
+use Term::ANSIColor;
 use JSON;
 use Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
@@ -147,33 +147,32 @@ sub compare_wishlists {
     }
   }
 # print items from old list only
-  say "Disappear from list:";
-  print_map(\%onlyOld);
+  print colored ( "===== Disappear from list:\n", 'yellow' );
+  print_map(\%onlyOld, 'reset');
 # print items from new list only
-  say "Appear in list:";
-  print_map(\%onlyNew);
+  print colored ( "===== Appear in list:\n", 'yellow' );
+  print_map(\%onlyNew, 'reset');
 # print items with price lower than earlier
-  say "Low price!!!";
-  print_map(\%priceDown);
+  print colored ( "===== Low price!!!\n", 'yellow' );
+  print_map(\%priceDown, 'green on_black');
 # print items with price higher than earlier
-  say "High price :(";
-  print_map(\%priceUp);
+  print colored ( "===== High price :(\n", 'yellow' );
+  print_map(\%priceUp, 'red on_black');
 # print items with the same price
-  say "Nothing changes";
-  print_map(\%priceEq);
+  print colored ( "===== Nothing changes\n", 'yellow' );
+  print_map(\%priceEq, 'reset');
 }
 
 ##################### work with data map #########################
 sub print_map {
-  my ( $mapRef ) = @_;
+  my ( $mapRef, $color ) = @_;
   while( my( $k, $v ) = each %$mapRef )
   {
-    my $message = "$k :: '$v->{'name'}'";
-    $message .=" $v->{'old_price'} ->" if ( exists $v->{'old_price'} and $v->{'old_price'} != 0 );
-    $message .=" $v->{'price'}";
-    $message .=" (-$v->{'discount'}%)" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
-    
-    say $message;
+    print "$k :: '$v->{'name'}' ";
+    print colored ( "$v->{'old_price'} -> ", $color ) if ( exists $v->{'old_price'} and $v->{'old_price'} != 0 );
+    print colored ( "$v->{'price'}", $color );
+    print " (-$v->{'discount'}%)" if ( exists $v->{'discount'} and $v->{'discount'} != 0 );
+    print "\n";
   }
 }
 
