@@ -101,10 +101,9 @@ sub printMap {
   my ($mapRef) = @_;
   while(my($k, $v) = each %$mapRef)
   {
-    say $k;
-    say "  ".$v->{'name'};
-    say "  ".$v->{'price'};
-    say "  ".$v->{'discount'}."%" unless $v->{'discount'} == 0;
+    my $message = $k." :: '".$v->{'name'}."' ".$v->{'price'};
+    $message .=" (-".$v->{'discount'}."%)" unless $v->{'discount'} == 0;
+    say $message;
   }
 }
 
