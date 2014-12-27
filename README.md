@@ -27,10 +27,7 @@ ok, it's simple, just exit to your command line. Do not forget to save new list 
 
 ## Additional packages
 
-HTML::TokeParser::Simple - html parsing
-
-LWP::Simple - send request and get html page from remote server
-
-Term::ANSIColor - I like to color words ^^
-
-JSON - serialize parsed data in json to save it on disk and deserialize when reading it back
+* [HTML::TokeParser::Simple](http://search.cpan.org/~ovid/HTML-TokeParser-Simple-3.16/lib/HTML/TokeParser/Simple.pm) - html parsing
+* [LWP::Simple](http://search.cpan.org/~mschilli/libwww-perl-6.08/lib/LWP/Simple.pm) - send request and get html page from remote server
+* [Term::ANSIColor](http://search.cpan.org/~rra/Term-ANSIColor-4.03/lib/Term/ANSIColor.pm) - I like to color words ^^
+* [JSON](http://search.cpan.org/~makamaka/JSON-2.90/lib/JSON.pm) - serialize parsed data in json to save it on disk and deserialize when reading it back
