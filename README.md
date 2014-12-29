@@ -25,6 +25,60 @@ if we've already had saved data from previous start (and we hope that there are 
 ```
 ok, it's simple, just exit to your command line. Do not forget to save new list before.
 
+## Example
+
+Suddenly it appears that my description in previous chapter is too complicated, so there is a simple example. In the lines, starting with '>>' script waits for user input.
+
+```
+$ perl ./wishlist.pl 
+>> w update ***
+./wishlist.html has already existed - remove it.
+try to load wishlist for user ***
+294440 :: 'Shadowgate' 104 (-75%)
+236430 :: 'DARK SOULS™ II' 399 (-50%)
+243200 :: 'Memoria' 101 (-66%)
+263300 :: 'BlazBlue: Calamity Trigger' 124 (-50%)
+20570 :: 'Warhammer® 40,000™: Dawn of War® II - Chaos Rising™' 149 (-50%)
+241930 :: 'Middle-earth: Shadow of Mordor' 674 (-25%)
+237930 :: 'Transistor' 141 (-66%)
+230230 :: 'Divinity: Original Sin' 401 (-33%)
+251730 :: 'Legend of Grimrock 2' 343 (-20%)
+243950 :: 'Divinity: Dragon Commander' 124 (-75%)
+261760 :: 'Lichdom: Battlemage' 237 (-66%)
+4580 :: 'Warhammer 40,000: Dawn of War – Dark Crusade' 149 (-50%)
+308360 :: 'LogiGun' 129
+9310 :: 'Warhammer 40,000: Dawn of War – Winter Assault' 149 (-50%)
+242920 :: 'Banished' 199 (-50%)
+>> w compare
+===== Disappear from list:
+237990 :: 'The Banner Saga' 209 (-50%)
+===== Appear in list:
+230230 :: 'Divinity: Original Sin' 401 (-33%)
+===== Low price!!!
+294440 :: 'Shadowgate' 167 -> 104 (-75%)
+237930 :: 'Transistor' 280 -> 141 (-66%)
+243950 :: 'Divinity: Dragon Commander' 169 -> 124 (-75%)
+===== High price :(
+241930 :: 'Middle-earth: Shadow of Mordor' 539 -> 674 (-25%)
+9310 :: 'Warhammer 40,000: Dawn of War – Winter Assault' 101 -> 149 (-50%)
+242920 :: 'Banished' 159 -> 199 (-50%)
+===== Nothing changes
+243200 :: 'Memoria' 101 (-66%)
+20570 :: 'Warhammer® 40,000™: Dawn of War® II - Chaos Rising™' 149 (-50%)
+263300 :: 'BlazBlue: Calamity Trigger' 124 (-50%)
+236430 :: 'DARK SOULS™ II' 399 (-50%)
+261760 :: 'Lichdom: Battlemage' 237 (-66%)
+4580 :: 'Warhammer 40,000: Dawn of War – Dark Crusade' 149 (-50%)
+308360 :: 'LogiGun' 129
+251730 :: 'Legend of Grimrock 2' 343 (-20%)
+>> w save
+Try to save new map as actual.
+Map size = 15
+Map saved.
+>> q
+Goodbuy!
+```
+
 ## Additional packages
 
 * [HTML::TokeParser::Simple](http://search.cpan.org/~ovid/HTML-TokeParser-Simple-3.16/lib/HTML/TokeParser/Simple.pm) - html parsing
